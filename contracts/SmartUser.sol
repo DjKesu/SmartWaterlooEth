@@ -6,20 +6,14 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 
-contract SmartUser is Ownable, Pausable {
+//Contract Address: 0xDe74E890C12076EBf5D9bf38dBC2E8166f835764
 
+contract SmartUser is Ownable, Pausable {
     /**
      * @dev Set who may pause the contract
      */
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
 
-    /**
-     * @dev Create an array of 'Info' structs
-     */
-    // Info[] public infos;
-
-
-    uint256 totalUsers = 0;
     /**
      * @dev Create a struct to store User Info
      */
@@ -35,10 +29,11 @@ contract SmartUser is Ownable, Pausable {
         string religion;
         string sexuality;
     }
-    
-    mapping(address => Info[]) public infos;
 
-    address payable public user;
+    /**
+     * @dev Create an array of 'Info' structs
+     */
+    Info[] public infos;
 
     constructor() {}
 
@@ -56,12 +51,6 @@ contract SmartUser is Ownable, Pausable {
         string sexuality
     );
 
-    function setUser(address payable _user) public onlyOwner {
-        user = _user;
-    }
-
-    // 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4,30092002,Male,173,132,14,N2L3G5,Asian,Other,Other
-
     // Adds an item to the user's Item list who called the function.
     function addInfo(
         address _user,
@@ -75,20 +64,20 @@ contract SmartUser is Ownable, Pausable {
         string memory religion,
         string memory sexuality
     ) public payable onlyOwner {
+        Info memory _formInfo = Info(
+            _user,
+            birthdate,
+            gender,
+            height,
+            weight,
+            grade,
+            postalCode,
+            race,
+            religion,
+            sexuality
+        );
 
-        Info memory _formInfo = Info(_user,
-        birthdate,
-        gender,
-        height,
-        weight,
-        grade,
-        postalCode,
-        race,
-        religion,
-        sexuality);
-
-        infos[msg.sender].push(_formInfo);
-
+        infos.push(_formInfo);
 
         // emits item added event.
         emit InformationAdded(
@@ -103,8 +92,8 @@ contract SmartUser is Ownable, Pausable {
             religion,
             sexuality
         );
-        totalUsers = totalUsers + 1;
     }
+
     /**
      * @dev pauses the contract
      */
@@ -119,13 +108,56 @@ contract SmartUser is Ownable, Pausable {
         _unpause();
     }
 
-    function getInfo(address _addr) public view returns (string memory, string memory, string memory, string memory, string memory, string memory, string memory, string memory, string memory)
+    /**
+     * @dev send address to retrieve information
+     */
+    function getInfo(address _addr)
+        public
+        view
+        returns (
+            string memory,
+            string memory,
+            string memory,
+            string memory,
+            string memory,
+            string memory,
+            string memory,
+            string memory,
+            string memory
+        )
     {
-        return (infos[msg.sender][0].birthdate,infos[msg.sender][0].gender,infos[msg.sender][0].height,infos[msg.sender][0].weight,infos[msg.sender][0].grade,infos[msg.sender][0].postalCode,infos[msg.sender][0].race,infos[msg.sender][0].religion,infos[msg.sender][0].sexuality);
+        for (uint256 i = 0; i < infos.length; i++) {
+            if (infos[i]._user == _addr) {
+                return (
+                    infos[i].birthdate,
+                    infos[i].gender,
+                    infos[i].height,
+                    infos[i].weight,
+                    infos[i].grade,
+                    infos[i].postalCode,
+                    infos[i].race,
+                    infos[i].religion,
+                    infos[i].sexuality
+                );
+            }
+        }
+        return (
+            "Not found",
+            "Not found",
+            "Not found",
+            "Not found",
+            "Not found",
+            "Not found",
+            "Not found",
+            "Not found",
+            "Not found"
+        );
     }
-    
-    function getTotalUsers() public view returns(uint256)
-    {
-        return totalUsers;
+
+    /**
+     * @dev get a Total Count of signed up addresses
+     */
+    function getTotalUsers() public view returns (uint256) {
+        return infos.length;
     }
 }
