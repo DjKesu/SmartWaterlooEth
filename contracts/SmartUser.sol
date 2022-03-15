@@ -6,8 +6,6 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 
-//Contract Address: 0xDe74E890C12076EBf5D9bf38dBC2E8166f835764
-
 contract SmartUser is Ownable, Pausable {
     /**
      * @dev Set who may pause the contract
@@ -28,6 +26,7 @@ contract SmartUser is Ownable, Pausable {
         string race;
         string religion;
         string sexuality;
+        string nickname;
     }
 
     /**
@@ -48,7 +47,8 @@ contract SmartUser is Ownable, Pausable {
         string postalCode,
         string race,
         string religion,
-        string sexuality
+        string sexuality,
+        string nickname
     );
 
     // Adds an item to the user's Item list who called the function.
@@ -62,7 +62,8 @@ contract SmartUser is Ownable, Pausable {
         string memory postalCode,
         string memory race,
         string memory religion,
-        string memory sexuality
+        string memory sexuality,
+        string memory nickname
     ) public payable onlyOwner {
         Info memory _formInfo = Info(
             _user,
@@ -74,7 +75,8 @@ contract SmartUser is Ownable, Pausable {
             postalCode,
             race,
             religion,
-            sexuality
+            sexuality,
+            nickname
         );
 
         infos.push(_formInfo);
@@ -90,7 +92,8 @@ contract SmartUser is Ownable, Pausable {
             postalCode,
             race,
             religion,
-            sexuality
+            sexuality,
+            nickname
         );
     }
 
@@ -123,6 +126,7 @@ contract SmartUser is Ownable, Pausable {
             string memory,
             string memory,
             string memory,
+            string memory,
             string memory
         )
     {
@@ -137,11 +141,13 @@ contract SmartUser is Ownable, Pausable {
                     infos[i].postalCode,
                     infos[i].race,
                     infos[i].religion,
-                    infos[i].sexuality
+                    infos[i].sexuality,
+                    infos[i].nickname
                 );
             }
         }
         return (
+            "Not found",
             "Not found",
             "Not found",
             "Not found",

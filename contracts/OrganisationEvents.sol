@@ -21,6 +21,9 @@ contract OrganisationEvents is Ownable, Pausable {
         _pause();
     }
 
+    /**
+     * @dev struct that contains all information regarding each event
+     */
     struct EventInfo {
         address organiser;
         string eventName;
@@ -32,6 +35,7 @@ contract OrganisationEvents is Ownable, Pausable {
         address[] attendees;
     }
 
+    //Array to store all events
     EventInfo[] public events;
 
     event EventCreated(
@@ -44,6 +48,9 @@ contract OrganisationEvents is Ownable, Pausable {
         string description
     );
 
+    /**
+     * @dev create event for an organisation
+     */
     function createOrgEvent(
         address organiser,
         string memory eventName,
@@ -78,6 +85,9 @@ contract OrganisationEvents is Ownable, Pausable {
         );
     }
 
+    /**
+     * @dev get all events set by an organisation
+     */
     function getOrgEvents(address orgAddress)
         public
         view
@@ -117,6 +127,10 @@ contract OrganisationEvents is Ownable, Pausable {
         return (_eNames, _aGroups, _sDate, _eDate, _aType, _desc);
     }
 
+    /**
+     * @dev add a new attendee to an event
+     * Parameter: user Address, name of event
+     */
     function newAttendee(address _user, string memory eventName)
         public
         payable
@@ -131,6 +145,10 @@ contract OrganisationEvents is Ownable, Pausable {
         }
     }
 
+    /**
+     * @dev get attendee list for a specfic event
+     * Parameter: Name of event
+     */
     function getAllEventAttendees(string memory eventName)
         public
         view
@@ -152,5 +170,52 @@ contract OrganisationEvents is Ownable, Pausable {
      */
     function unpause() public onlyOwner {
         _unpause();
+    }
+
+    /**
+     * @dev get all events a user has signed up for
+     * Parameter: user Address
+     */
+    function getUserEvents(address user)
+        public
+        view
+        returns (
+            string[] memory eventName,
+            string[] memory ageGroup,
+            string[] memory startDate,
+            string[] memory endDate,
+            string[] memory activityType,
+            string[] memory description
+        )
+    {
+        uint256 counter = 0;
+        for (uint256 i = 0; i < events.length; i++) {
+            for (uint256 j = 0; j < events[i].attendees.length; j++) {
+                if (events[i].attendees[j] == user) {
+                    counter = counter + 1;
+                }
+            }
+        }
+        string[] memory _eNames = new string[](counter);
+        string[] memory _aGroups = new string[](counter);
+        string[] memory _sDate = new string[](counter);
+        string[] memory _eDate = new string[](counter);
+        string[] memory _aType = new string[](counter);
+        string[] memory _desc = new string[](counter);
+        counter = 0;
+        for (uint256 i = 0; i < events.length; i++) {
+            for (uint256 j = 0; j < events[i].attendees.length; j++) {
+                if (events[i].attendees[j] == user) {
+                    _eNames[counter] = events[i].eventName;
+                    _aGroups[counter] = events[i].ageGroup;
+                    _sDate[counter] = events[i].startDate;
+                    _eDate[counter] = events[i].endDate;
+                    _aType[counter] = events[i].activityType;
+                    _desc[counter] = events[i].description;
+                    counter++;
+                }
+            }
+        }
+        return (_eNames, _aGroups, _sDate, _eDate, _aType, _desc);
     }
 }
