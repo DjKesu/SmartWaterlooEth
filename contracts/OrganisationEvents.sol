@@ -218,4 +218,36 @@ contract OrganisationEvents is Ownable, Pausable {
         }
         return (_eNames, _aGroups, _sDate, _eDate, _aType, _desc);
     }
+
+    function getAllEvents()
+        public
+        view
+        returns (
+            string[] memory eventName,
+            string[] memory ageGroup,
+            string[] memory startDate,
+            string[] memory endDate,
+            string[] memory activityType,
+            string[] memory description
+        )
+    {
+        uint256 counter = events.length;
+        string[] memory _eNames = new string[](counter);
+        string[] memory _aGroups = new string[](counter);
+        string[] memory _sDate = new string[](counter);
+        string[] memory _eDate = new string[](counter);
+        string[] memory _aType = new string[](counter);
+        string[] memory _desc = new string[](counter);
+        counter = 0;
+        for (uint256 i = 0; i < events.length; i++) {
+            _eNames[counter] = events[i].eventName;
+            _aGroups[counter] = events[i].ageGroup;
+            _sDate[counter] = events[i].startDate;
+            _eDate[counter] = events[i].endDate;
+            _aType[counter] = events[i].activityType;
+            _desc[counter] = events[i].description;
+            counter++;
+        }
+        return (_eNames, _aGroups, _sDate, _eDate, _aType, _desc);
+    }
 }

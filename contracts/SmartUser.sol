@@ -17,16 +17,16 @@ contract SmartUser is Ownable, Pausable {
      */
     struct Info {
         address _user;
+        string uid;
         string birthdate;
         string gender;
-        string height;
-        string weight;
+        string body;
         string grade;
         string postalCode;
         string race;
         string religion;
         string sexuality;
-        string nickname;
+        string avatarName;
     }
 
     /**
@@ -39,44 +39,44 @@ contract SmartUser is Ownable, Pausable {
     // Create an event when a new item is added, you can use this to update remote item lists.
     event InformationAdded(
         address _user,
+        string uid,
         string birthdate,
         string gender,
-        string height,
-        string weight,
+        string body,
         string grade,
         string postalCode,
         string race,
         string religion,
         string sexuality,
-        string nickname
+        string avatarName
     );
 
     // Adds an item to the user's Item list who called the function.
     function addInfo(
         address _user,
+        string memory uid,
         string memory birthdate,
         string memory gender,
-        string memory height,
-        string memory weight,
+        string memory body,
         string memory grade,
         string memory postalCode,
         string memory race,
         string memory religion,
         string memory sexuality,
-        string memory nickname
-    ) public payable onlyOwner {
+        string memory avatarName
+    ) public payable {
         Info memory _formInfo = Info(
             _user,
+            uid,
             birthdate,
             gender,
-            height,
-            weight,
+            body,
             grade,
             postalCode,
             race,
             religion,
             sexuality,
-            nickname
+            avatarName
         );
 
         infos.push(_formInfo);
@@ -84,16 +84,16 @@ contract SmartUser is Ownable, Pausable {
         // emits item added event.
         emit InformationAdded(
             msg.sender,
+            uid,
             birthdate,
             gender,
-            height,
-            weight,
+            body,
             grade,
             postalCode,
             race,
             religion,
             sexuality,
-            nickname
+            avatarName
         );
     }
 
@@ -133,31 +133,21 @@ contract SmartUser is Ownable, Pausable {
         for (uint256 i = 0; i < infos.length; i++) {
             if (infos[i]._user == _addr) {
                 return (
+                    infos[i].uid,
                     infos[i].birthdate,
                     infos[i].gender,
-                    infos[i].height,
-                    infos[i].weight,
+                    infos[i].body,
                     infos[i].grade,
                     infos[i].postalCode,
                     infos[i].race,
                     infos[i].religion,
                     infos[i].sexuality,
-                    infos[i].nickname
+                    infos[i].avatarName
                 );
             }
         }
-        return (
-            "Not found",
-            "Not found",
-            "Not found",
-            "Not found",
-            "Not found",
-            "Not found",
-            "Not found",
-            "Not found",
-            "Not found",
-            "Not found"
-        );
+        // return ("Not found", "Not found", "Not found", "Not found", "Not found", "Not found", "Not found", "Not found", "Not found","Not found");
+        revert("Not Found!");
     }
 
     /**
