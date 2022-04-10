@@ -6,6 +6,13 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 
+
+//TO-DO:
+// 1) Add a mapping and indexing to user's address
+// 2) Make contracts inter-operable
+// 3) Create organisation owner
+// 4) Think of a way to create data filters
+
 contract SmartOrganisation is Ownable, Pausable {
 
     /**
