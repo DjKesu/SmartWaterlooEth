@@ -1,21 +1,13 @@
 import { ethers } from "hardhat";
-
+import "../build";
 
 require('dotenv').config();
 
 async function main() {
 
-  // const { API_URL, PRIVATE_KEY } = process.env;
-  // const d = [`0x${PRIVATE_KEY}`];
-  // console.log(d)
-
   // Smart User Contract Deployment
   const SmartUser = await ethers.getContractFactory("SmartUser");
-  const user = await SmartUser.deploy(
-    {
-      value: hre.ethers.utils.parseEther("0.5"),
-    }
-  );
+  const user = await SmartUser.deploy();
 
   await user.deployed();
 
@@ -38,6 +30,20 @@ async function main() {
   await events.deployed();
 
   console.log("SmartEvents deployed to:", events.address);
+
+  //SurveyResponse Contract Deployment
+  const SurveyResponse = await ethers.getContractFactory("UserSurveyResponses");
+  const surveyResponse = await SurveyResponse.deploy();
+  await surveyResponse.deployed();
+
+  console.log("SurveyResponse deployed to:", surveyResponse.address);
+
+  //OrgSurvey Contract Deployment
+  const OrgSurvey = await ethers.getContractFactory("OrgSurvey");
+  const orgSurvey = await OrgSurvey.deploy();
+  await orgSurvey.deployed();
+
+  console.log("OrgSurvey deployed to:", orgSurvey.address);
 }
 
 const runMain = async () => {
@@ -51,8 +57,3 @@ const runMain = async () => {
 };
 
 runMain();
-
-// main().catch((error) => {
-//   console.error(error);
-//   process.exitCode = 1;
-// });

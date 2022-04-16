@@ -7,13 +7,12 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 
-contract Survey is Ownable, Pausable {
-
-   /**
+contract OrgSurvey is Ownable, Pausable {
+    /**
      * @dev Set who may pause the contract
      */
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
-    
+
     constructor() {}
 
     /**
@@ -38,36 +37,33 @@ contract Survey is Ownable, Pausable {
 
     Surveys[] public survey;
 
-    function createSurvey(address _org, string[] memory _questions, string memory _sId) public payable
-    {
-        Surveys memory surveyInfo = Surveys(
-            _org,
-            _questions,
-            _sId
-        );
+    function createSurvey(
+        address _org,
+        string[] memory _questions,
+        string memory _sId
+    ) public payable {
+        Surveys memory surveyInfo = Surveys(_org, _questions, _sId);
         survey.push(surveyInfo);
     }
 
-    function getSurveyIDs(address _org) public view returns(string[] memory)
-    {
+    function getSurveyIDs(address _org) public view returns (string[] memory) {
         string[] memory surveyIDs = new string[](survey.length);
-        uint k = 0;
-        for(uint i = 0; i < survey.length; i++)
-        {
-            if(survey[i].org == _org)
-            {
-                surveyIDs[k++]=(survey[i].sId);
+        uint256 k = 0;
+        for (uint256 i = 0; i < survey.length; i++) {
+            if (survey[i].org == _org) {
+                surveyIDs[k++] = (survey[i].sId);
             }
         }
         return surveyIDs;
     }
 
-    function getSurveyInfoByID(string memory _sId) public view returns(string[] memory)
+    function getSurveyInfoByID(string memory _sId)
+        public
+        view
+        returns (string[] memory)
     {
-        for(uint i = 0; i < survey.length; i++)
-        {
-            if(keccak256(bytes(survey[i].sId)) == keccak256(bytes(_sId)))
-            {
+        for (uint256 i = 0; i < survey.length; i++) {
+            if (keccak256(bytes(survey[i].sId)) == keccak256(bytes(_sId))) {
                 return survey[i].questions;
             }
         }

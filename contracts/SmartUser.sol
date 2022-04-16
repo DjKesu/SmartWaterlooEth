@@ -1,19 +1,13 @@
 //SPDX-License-Identifier: Unlicensed
 /// @custom:security-contact krish.mehta@uwaterloo.ca
 
-//TO-DO:
-// 1) Add a mapping and indexing to user's address
-// 2) Make contracts inter-operable
-// 3) Add organisation data access
-// 4) Think of a way to store data added through surveys and be able to query that data
-
 pragma solidity ^0.8.0;
 
 //import "hardhat/console.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 
-//inital_Data structuring
+//Inital data structuring
 // string uid;
 // string birthdate;
 // string gender;
@@ -23,11 +17,11 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 // string race;
 // string religion;
 // string sexuality;
-// string avatarName;
+// string nickname;
+// string avatarString
 
 contract SmartUser is Ownable, Pausable {
-
-   /**
+    /**
      * @dev Set who may pause the contract
      */
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
@@ -36,46 +30,29 @@ contract SmartUser is Ownable, Pausable {
      * @dev Create a struct to store User Info
      */
 
-    
     struct Info {
-        address _user;
         string[] initialData;
     }
 
     /**
      * @dev Create an array of 'Info' structs
      */
-    Info[] public infos;
-    
+    mapping(address => Info) infos;
+
+    uint counter = 0;
+
     constructor() {}
 
-    // Create an event when a new item is added, you can use this to update remote item lists.
-    event InformationAdded(
-        address _user,
-        string[] _initialData);
-
-    // Adds an item to the user's Item list who called the function.
-    function addInfo(
-        address _user,
-        string[] memory _initialData
-    ) public payable {
-
-        if(_initialData.length != 10)
-        {
+    function addInfo(address _user, string[] memory _initialData)
+        public
+        payable
+    {
+        if (_initialData.length != 10) {
             revert("Tried inserting more elements in initial Data");
         }
-        Info memory _formInfo = Info(
-            _user,
-            _initialData
-        );
 
-        infos.push(_formInfo);
-
-        // emits item added event.
-        emit InformationAdded(
-            msg.sender,
-            _initialData
-        );
+        infos[_user].initialData = _initialData;
+        counter += 1;
     }
 
     /**
@@ -95,27 +72,14 @@ contract SmartUser is Ownable, Pausable {
     /**
      * @dev send address to retrieve information
      */
-    function getInfo(address _addr)
-        public
-        view
-        returns (
-            string[] memory
-        )
-    {
-        for (uint256 i = 0; i < infos.length; i++) {
-            if (infos[i]._user == _addr) {
-                return (
-                    infos[i].initialData
-                );
-            }
-        }
-        revert("Not Found!");
+    function getInfo(address _addr) public view returns (string[] memory) {
+        return infos[_addr].initialData;
     }
 
     /**
      * @dev get a Total Count of signed up addresses
      */
     function getTotalUsers() public view returns (uint256) {
-        return infos.length;
+        return counter;
     }
 }
